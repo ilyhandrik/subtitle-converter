@@ -1,45 +1,72 @@
 <template>
   <v-app>
     <v-app-bar
-      app
-      color="primary"
-      dark
+        class="d-flex justify-end"
+        app
     >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
       <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
+          small
+          dark
+          @click="selectAssFile"
       >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
+        загрузить субтитры *.ass
       </v-btn>
+      <input
+          @input="openSubtitles"
+          ref="input"
+          accept=".ass"
+          hidden type="file"
+      >
     </v-app-bar>
+    <v-navigation-drawer
+        app
+    >
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title
+              class="title"
+          >
+            Subtitle converter
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            v 1.0
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
 
+      <v-divider></v-divider>
+
+      <v-list
+          dense
+          nav
+      >
+        <v-list-item
+            v-for="item in items"
+            :key="item.title"
+            link
+        >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
     <v-main>
-      <router-view/>
+      <v-container
+          fluid
+      >
+        <router-view/>
+      </v-container>
     </v-main>
+    <v-footer
+        app
+    >
+      <!-- -->
+    </v-footer>
   </v-app>
 </template>
 
@@ -47,9 +74,27 @@
 
 export default {
   name: 'App',
-
-  data: () => ({
-    //
-  }),
+  data() {
+    return {
+      items: [
+        { title: 'Таблица актер-персонаж', icon: 'mdi-table' },
+        { title: 'Список актеров', icon: 'mdi-account-box-multiple' },
+        { title: 'Подсчет тайминга', icon: 'mdi-clipboard-clock-outline' },
+      ],
+    };
+  },
+  methods: {
+    selectAssFile() {
+      this.$refs.input.click();
+    },
+    openSubtitles(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.$store.dispatch('SET_ASS_FILE', e.target.result);
+      };
+      reader.readAsText(file);
+    },
+  },
 };
 </script>
