@@ -13,49 +13,31 @@
         :multi-sort="false"
         :single-select="true"
     >
-      <template v-slot:header.name="{ header }">
+      <template
+          v-slot:header.name="{ header }"
+      >
         {{ header.text.toUpperCase() }}
       </template>
-      <template v-slot:item.character="props" class="temp">
-        <v-edit-dialog
-            class="edit"
-            :return-value.sync="props.item.character"
-            @save="save"
-            @cancel="cancel"
-            @open="open"
-            @close="close"
+      <template
+          v-slot:item.characters="props"
+      >
+        <div
+            class="characters"
+            @click="open(props.item.actor)"
+            v-if="!(editingRow === props.item.actor)"
         >
-          {{ props.item.character }}
-          <template v-slot:input>
-<!--            <v-text-field-->
-<!--                v-model="props.item.actor"-->
-<!--                label="Edit"-->
-<!--                single-line-->
-<!--                counter-->
-<!--            ></v-text-field>-->
-            <v-list
-                width="280px"
-                max-height="300px"
-                dense
-            >
-              <v-list-item-group
-                  v-model="ac"
-                  color="primary"
-              >
-                <v-list-item
-                    v-for="(item, i) in characters"
-                    :key="i"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title v-text="item"></v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </template>
-        </v-edit-dialog>
+          {{ formatCharactersColumn(props.item.characters) }}
+        </div>
+        <characters-select
+            v-if="editingRow === props.item.actor"
+            @select="assignCharactersToActor"
+            :actor="props.item.actor"
+            @close="closeSelect"
+        />
       </template>
-      <template v-slot:item.isActive="{ item }">
+      <template
+          v-slot:item.isActive="{ item }"
+      >
         <v-simple-checkbox
             v-model="item.isActive"
             :ripple="false"
@@ -66,12 +48,18 @@
 </template>
 
 <script>
+import CharactersSelect from '@/components/CharactersSelect.vue';
+
 export default {
   name: 'MainTable',
+  components: {
+    CharactersSelect,
+  },
   data() {
     return {
       temp: true,
       ac: 'Депп',
+      editingRow: null,
       footerOptions: {
         'items-per-page-all-text': 'Всего',
         'items-per-page-text': 'Показывать на странице',
@@ -81,11 +69,12 @@ export default {
           text: 'Актер',
           align: 'start',
           value: 'actor',
+          width: '160px',
         },
         {
           text: 'Персонаж',
           align: 'start',
-          value: 'character',
+          value: 'characters',
         },
         {
           text: 'Включить в монтажный лист',
@@ -97,11 +86,7 @@ export default {
   },
   computed: {
     tableData() {
-      return this.$store.state.characters.map((character) => ({
-        character,
-        actor: 'Безруков',
-        isActive: true,
-      }));
+      return this.$store.getters.actorToCharacters;
     },
     actors() {
       return this.$store.state.actors;
@@ -117,23 +102,40 @@ export default {
     cancel() {
       console.log('cancel');
     },
-    open() {
+    open(actor) {
+      this.editingRow = actor;
+      console.log(actor);
       console.log('open');
     },
     close() {
       console.log('close');
     },
+    assignCharactersToActor(character) {
+      this.$store.commit('ASSIGN_CHARACTERS_TO_ACTOR', {
+        character,
+        actor: this.editingRow,
+      });
+    },
+    formatCharactersColumn(characters) {
+      if (characters.length) {
+        return characters.join(', ');
+      }
+      return '-';
+    },
+    closeSelect() {
+      this.editingRow = null;
+    },
   },
 };
 </script>
 
-<style scoped>
-.edit {
-  position: absolute;
-  bottom: 0 !important;
-  left: 0 !important;
-}
-.temp {
-  position: relative;
-}
+<style scoped lang="scss">
+ .characters {
+   cursor: pointer;
+   //background-color: white;
+
+   &:hover {
+     //background-color: red;
+   }
+ }
 </style>

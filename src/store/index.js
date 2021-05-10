@@ -17,6 +17,9 @@ export default new Vuex.Store({
       'Михалков',
       'Боярский',
     ],
+    characterToActorMap: {
+      Джон: 'Депп',
+    },
   },
   mutations: {
     SET_ASS_FILE(state, file) {
@@ -40,13 +43,28 @@ export default new Vuex.Store({
     EDIT_ACTOR(state, { index, newName }) {
       state.actors.splice(index, 1, newName);
     },
+    ASSIGN_CHARACTERS_TO_ACTOR(state, { character, actor }) {
+      if (state.characterToActorMap[character] === actor) {
+        state.characterToActorMap[character] = null;
+      } else {
+        state.characterToActorMap[character] = actor;
+      }
+    },
+    SET_CHARACTER_TO_ACTOR_MAP(state, map) {
+      state.characterToActorMap = map;
+    },
   },
   actions: {
-    SET_ASS_FILE({ commit }, file) {
+    SET_ASS_FILE({ commit, state }, file) {
       const dialogs = parser.getDialogs(file);
+      const map = {};
       commit('SET_ASS_FILE', file);
       commit('SET_DIALOGS', dialogs);
       commit('SET_CHARACTERS', parser.getCharacters(dialogs));
+      state.characters.forEach((character) => {
+        map[character] = null;
+      });
+      commit('SET_CHARACTER_TO_ACTOR_MAP', map);
     },
     ADD_ACTOR({ commit, state }, actor) {
       if (!(state.actors.indexOf(actor) + 1)) {
@@ -58,6 +76,23 @@ export default new Vuex.Store({
       if (index + 1) {
         commit('EDIT_ACTOR', { index, newName });
       }
+    },
+  },
+  getters: {
+    actorToCharacters(state) {
+      const actors = {};
+      state.actors.forEach((actor) => {
+        actors[actor] = [];
+      });
+      Object.keys(state.characterToActorMap).forEach((key) => {
+        if (state.characterToActorMap[key]) {
+          actors[state.characterToActorMap[key]].push(key);
+        }
+      });
+      return Object.keys(actors).map((actor) => ({
+        actor,
+        characters: actors[actor],
+      }));
     },
   },
   modules: {
