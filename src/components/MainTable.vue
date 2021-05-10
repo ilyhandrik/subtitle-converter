@@ -11,19 +11,21 @@
         no-data-text="Файл субтитров не загружен"
         sort-by="character"
         :multi-sort="false"
+        :single-select="true"
     >
       <template v-slot:header.name="{ header }">
         {{ header.text.toUpperCase() }}
       </template>
-      <template v-slot:item.actor="props">
+      <template v-slot:item.character="props" class="temp">
         <v-edit-dialog
-            :return-value.sync="props.item.actor"
+            class="edit"
+            :return-value.sync="props.item.character"
             @save="save"
             @cancel="cancel"
             @open="open"
             @close="close"
         >
-          {{ props.item.actor }}
+          {{ props.item.character }}
           <template v-slot:input>
 <!--            <v-text-field-->
 <!--                v-model="props.item.actor"-->
@@ -31,11 +33,25 @@
 <!--                single-line-->
 <!--                counter-->
 <!--            ></v-text-field>-->
-            <v-select
-                :items="items"
-                label="Solo field"
-                solo
-            ></v-select>
+            <v-list
+                width="280px"
+                max-height="300px"
+                dense
+            >
+              <v-list-item-group
+                  v-model="ac"
+                  color="primary"
+              >
+                <v-list-item
+                    v-for="(item, i) in characters"
+                    :key="i"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title v-text="item"></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
           </template>
         </v-edit-dialog>
       </template>
@@ -54,20 +70,22 @@ export default {
   name: 'MainTable',
   data() {
     return {
+      temp: true,
+      ac: 'Депп',
       footerOptions: {
         'items-per-page-all-text': 'Всего',
         'items-per-page-text': 'Показывать на странице',
       },
       headers: [
         {
-          text: 'Персонаж',
-          align: 'start',
-          value: 'character',
-        },
-        {
           text: 'Актер',
           align: 'start',
           value: 'actor',
+        },
+        {
+          text: 'Персонаж',
+          align: 'start',
+          value: 'character',
         },
         {
           text: 'Включить в монтажный лист',
@@ -81,9 +99,15 @@ export default {
     tableData() {
       return this.$store.state.characters.map((character) => ({
         character,
-        actor: 'Джонни Депп',
+        actor: 'Безруков',
         isActive: true,
       }));
+    },
+    actors() {
+      return this.$store.state.actors;
+    },
+    characters() {
+      return this.$store.state.characters;
     },
   },
   methods: {
@@ -104,5 +128,12 @@ export default {
 </script>
 
 <style scoped>
-
+.edit {
+  position: absolute;
+  bottom: 0 !important;
+  left: 0 !important;
+}
+.temp {
+  position: relative;
+}
 </style>
