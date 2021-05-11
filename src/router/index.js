@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import MainTable from '@/components/MainTable.vue';
+import MainTableView from '@/views/MainTableView.vue';
 import ActorsListView from '@/views/ActorsListView.vue';
 import TimeCalcView from '@/views/TimeCalcView.vue';
 
@@ -8,9 +8,13 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    path: '*',
+    redirect: '/',
+  },
+  {
     path: '/',
-    name: 'Home',
-    component: MainTable,
+    name: 'MainTable',
+    component: MainTableView,
   },
   {
     path: '/actors',

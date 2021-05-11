@@ -13,6 +13,12 @@ const fileSave = (extension, fileName, data) => {
 const csvExport = (data) => {
   fileSave('csv', 'time', data);
 };
+
+const jsonExport = (data) => {
+  fileSave('json', 'time', data);
+};
+
 export default {
   csvExport,
+  jsonExport,
 };

@@ -11,15 +11,8 @@ export default new Vuex.Store({
     assFile: '',
     dialogs: [],
     characters: [],
-    actors: [
-      'Депп',
-      'Безруков',
-      'Михалков',
-      'Боярский',
-    ],
-    characterToActorMap: {
-      Джон: 'Депп',
-    },
+    actors: [],
+    characterToActorMap: {},
   },
   mutations: {
     SET_ASS_FILE(state, file) {
@@ -77,6 +70,18 @@ export default new Vuex.Store({
         commit('EDIT_ACTOR', { index, newName });
       }
     },
+    FILL_FROM_JSON({ commit, state }, data) {
+      const map = {};
+      const actors = {};
+      data.forEach((row) => {
+        if (({}).hasOwnProperty.call(state.characterToActorMap, row.character)) {
+          map[row.character] = row.actor;
+          actors[row.actor] = row.actor;
+        }
+      });
+      commit('SET_ACTORS', Object.keys(actors).map((key) => (key)));
+      commit('SET_CHARACTER_TO_ACTOR_MAP', { ...state.characterToActorMap, ...map });
+    },
   },
   getters: {
     actorToCharacters(state) {
@@ -93,6 +98,19 @@ export default new Vuex.Store({
         actor,
         characters: actors[actor],
       }));
+    },
+    characterToActor(state) {
+      return Object.keys(state.characterToActorMap)
+        .map((key) => ({
+          character: key,
+          actor: state.characterToActorMap[key],
+        }))
+        .reduce((acc, curr) => {
+          if (curr.actor) {
+            acc.push(curr);
+          }
+          return acc;
+        }, []);
     },
   },
   modules: {

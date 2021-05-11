@@ -22,6 +22,7 @@
     </v-app-bar>
     <v-navigation-drawer
         app
+        permanent
     >
       <v-list-item>
         <v-list-item-content>

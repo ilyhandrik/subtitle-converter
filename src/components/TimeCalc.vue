@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="md-6 lg-6 sm-12">
-        <v-card class="pa-1" elevation="2">
+        <v-card class="pa-0" elevation="2">
           <v-card-title class="pa-2">
             <v-text-field
                 class="ratio pt-2"
