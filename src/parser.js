@@ -49,7 +49,14 @@ const getCharacters = (dialogs) => {
   return Object.keys(uniqueCharacters);
 };
 
+const getTime = (str) => {
+  const [ hours, minutes, seconds ] = str.split(':');
+  const [ intSeconds, hundredths ] = seconds.split('.');
+  return (parseInt(hours, 10) * 60 * 60 * 100) + (parseInt(minutes, 10) * 60 * 100) + (parseInt(intSeconds, 10) * 100) + parseInt(hundredths, 10);
+};
+
 export default {
   getDialogs,
   getCharacters,
+  getTime,
 };

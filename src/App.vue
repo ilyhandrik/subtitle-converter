@@ -9,10 +9,9 @@
       <v-spacer></v-spacer>
       <v-btn
           small
-          dark
           @click="selectAssFile"
       >
-        загрузить субтитры *.ass
+        открыть файл *.ass
       </v-btn>
       <input
           @input="openSubtitles"
@@ -98,7 +97,7 @@ export default {
         {
           title: 'Подсчет тайминга',
           icon: 'mdi-clipboard-clock-outline',
-          path: '/cvcv',
+          path: '/time',
         },
       ],
       currentPage: 0,
