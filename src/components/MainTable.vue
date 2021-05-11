@@ -30,6 +30,12 @@
             >
               Загрузить json
             </v-list-item>
+            <v-list-item
+                @click="createSheet"
+                link
+            >
+              Создать монтажный лист
+            </v-list-item>
           </v-list>
         </v-menu>
       </v-card-title>
@@ -92,6 +98,7 @@
 import CharactersSelect from '@/components/CharactersSelect.vue';
 import fileExport from '@/utils/fileExport';
 import importFile from '@/utils/importFile';
+import docx from '@/utils/docx';
 
 export default {
   name: 'MainTable',
@@ -140,6 +147,9 @@ export default {
     characterToActor() {
       return this.$store.getters.characterToActor;
     },
+    actorToCharacters() {
+      return this.$store.getters.actorToCharacters;
+    },
     file() {
       return this.$store.state.assFile;
     },
@@ -181,6 +191,9 @@ export default {
     closeSelect() {
       this.editingRow = null;
     },
+    createSheet() {
+      docx.createSheet(this.$store.state.dialogs, this.actorToCharacters);
+    },
   },
 };
 </script>
@@ -191,7 +204,7 @@ export default {
    //background-color: white;
 
    &:hover {
-     //background-color: red;
+    // background-color: #f6e846;
    }
  }
 </style>
