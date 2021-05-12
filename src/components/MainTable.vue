@@ -204,7 +204,7 @@ export default {
    //background-color: white;
 
    &:hover {
-    // background-color: #f6e846;
+    background-color: #6fdd12;
    }
  }
 </style>

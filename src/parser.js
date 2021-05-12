@@ -16,12 +16,12 @@ const getDialogs = (file) => {
       marginR,
       marginV,
       effect,
-      rawText,
+      ...rawText
     ] = dialog.replace('Dialogue:', '').split(',');
 
     const name = nameString.split(' / ');
     /* eslint-disable */
-    const text = rawText.replaceAll(/\\N/g,'\n');
+    const text = rawText.join(', ');
 
     return {
       layer,

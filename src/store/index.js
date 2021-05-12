@@ -49,7 +49,8 @@ export default new Vuex.Store({
   },
   actions: {
     SET_ASS_FILE({ commit, state }, file) {
-      const dialogs = parser.getDialogs(file);
+      const dialogs = parser.getDialogs(file)
+        .sort((a, b) => (parser.getTime(a.start) - parser.getTime(b.start)));
       const map = {};
       commit('SET_ASS_FILE', file);
       commit('SET_DIALOGS', dialogs);
