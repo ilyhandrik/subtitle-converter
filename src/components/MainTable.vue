@@ -17,25 +17,39 @@
             </v-btn>
           </template>
 
-          <v-list>
-            <v-list-item
-                @click="saveToJson"
-                link
+          <v-list class="menu pa-0">
+            <v-list-item-group
+                color="primary"
+                dense
             >
-              Сохранить в json
-            </v-list-item>
-            <v-list-item
-                @click="openJson"
-                link
-            >
-              Загрузить json
-            </v-list-item>
-            <v-list-item
-                @click="createSheet"
-                link
-            >
-              Создать монтажный лист
-            </v-list-item>
+              <v-list-item
+                  @click="createSheet"
+                  link
+              >
+                Общий монтажный лист
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item
+                  @click="createSheet({isClear: true})"
+                  link
+              >
+                Чистый монтажный лист
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item
+                  @click="saveToJson"
+                  link
+              >
+                Сохранить в json
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item
+                  @click="openJson"
+                  link
+              >
+                Загрузить json
+              </v-list-item>
+            </v-list-item-group>
           </v-list>
         </v-menu>
       </v-card-title>
@@ -50,7 +64,6 @@
           no-data-text="актеры не добавлены"
           sort-by="character"
           :multi-sort="false"
-          :single-select="true"
       >
         <template
             v-slot:header.name="{ header }"
@@ -77,10 +90,12 @@
         <template
             v-slot:item.isActive="{ item }"
         >
-          <v-simple-checkbox
-              v-model="item.isActive"
-              :ripple="false"
-          ></v-simple-checkbox>
+          <v-btn
+              icon
+              @click="createSheet({ actor: item.actor })"
+          >
+            <v-icon>mdi-playlist-play</v-icon>
+          </v-btn>
         </template>
       </v-data-table>
     </v-card>
@@ -127,7 +142,7 @@ export default {
           value: 'characters',
         },
         {
-          text: 'Включить в монтажный лист',
+          text: '',
           align: 'end',
           value: 'isActive',
         },
@@ -155,11 +170,8 @@ export default {
     },
   },
   methods: {
-    save() {
-      console.log('save');
-    },
     saveToJson() {
-      fileExport.jsonExport(JSON.stringify(this.characterToActor, null, '    '));
+      fileExport.jsonExport(JSON.stringify(this.characterToActor, null, '    '), this.$store.state.fileName);
     },
     openJson() {
       this.$refs.fileInput.click();
@@ -170,11 +182,6 @@ export default {
     },
     open(actor) {
       this.editingRow = actor;
-      console.log(actor);
-      console.log('open');
-    },
-    close() {
-      console.log('close');
     },
     assignCharactersToActor(character) {
       this.$store.commit('ASSIGN_CHARACTERS_TO_ACTOR', {
@@ -191,20 +198,29 @@ export default {
     closeSelect() {
       this.editingRow = null;
     },
-    createSheet() {
-      docx.createSheet(this.$store.state.dialogs, this.actorToCharacters);
+    createSheet({ actor, isClear }) {
+      docx.createSheet({
+        dialogs: this.$store.state.dialogs,
+        actorToChars: this.actorToCharacters,
+        isClear,
+        actor,
+        fileName: this.$store.state.fileName,
+      });
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
+  .menu {
+    font-size: 14px;
+  }
  .characters {
    cursor: pointer;
    //background-color: white;
 
    &:hover {
-    background-color: #6fdd12;
+    // background-color: #6fdd12;
    }
  }
 </style>

@@ -126,10 +126,11 @@ export default {
       });
     },
     exportToCsv() {
-      let data = this.tableData.map((row) => (`${row.actor};${this.$options.filters.timeToMinutes(row.time)}`)).join('\n');
+      let data = this.tableData
+        .map((row) => (`${row.actor};${this.$options.filters.timeToMinutes(row.time)}`))
+        .join('\n');
       data += `\nСумма;${this.$options.filters.timeToMinutes(this.total)}`;
-      console.log(data);
-      fileExport.csvExport(data);
+      fileExport.csvExport(data, this.$store.state.fileName);
     },
   },
   filters: {

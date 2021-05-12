@@ -114,7 +114,10 @@ export default {
       const reader = new FileReader();
       reader.onload = (e) => {
         this.fileName = file.name;
-        this.$store.dispatch('SET_ASS_FILE', e.target.result);
+        this.$store.dispatch('SET_ASS_FILE', {
+          data: e.target.result,
+          fileName: this.fileName,
+        });
       };
       reader.readAsText(file);
     },

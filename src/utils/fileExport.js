@@ -10,18 +10,18 @@ const fileSave = (extension, fileName, data) => {
   document.body.removeChild(a);
 };
 
-const csvExport = (data) => {
-  fileSave('csv', 'time', data);
+const csvExport = (data, fileName) => {
+  fileSave('csv', fileName, data);
 };
 
-const jsonExport = (data) => {
-  fileSave('json', 'time', data);
+const jsonExport = (data, fileName) => {
+  fileSave('json', fileName, data);
 };
 
-const docxExport = (blob) => {
+const docxExport = (blob, fileName) => {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.setAttribute('download', '1.docx');
+  a.setAttribute('download', `${fileName}.docx`);
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

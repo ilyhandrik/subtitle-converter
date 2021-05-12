@@ -173,7 +173,6 @@ export default {
       this.editDialog = true;
       this.editedName = item.name;
       this.dirtyName = item.name;
-      console.log(item);
     },
     applyEdit() {
       const newName = this.dirtyName;

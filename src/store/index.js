@@ -9,14 +9,18 @@ export default new Vuex.Store({
   state: {
     currentView: '/',
     assFile: '',
+    fileName: '',
     dialogs: [],
     characters: [],
     actors: [],
     characterToActorMap: {},
   },
   mutations: {
-    SET_ASS_FILE(state, file) {
-      state.assFile = file;
+    SET_ASS_FILE(state, data) {
+      state.assFile = data;
+    },
+    SET_ASS_FILE_NAME(state, name) {
+      state.fileName = name.replace('.ass', '');
     },
     SET_ACTORS(state, actors) {
       state.actors = actors;
@@ -48,11 +52,12 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    SET_ASS_FILE({ commit, state }, file) {
-      const dialogs = parser.getDialogs(file)
+    SET_ASS_FILE({ commit, state }, { data, fileName }) {
+      const dialogs = parser.getDialogs(data)
         .sort((a, b) => (parser.getTime(a.start) - parser.getTime(b.start)));
       const map = {};
-      commit('SET_ASS_FILE', file);
+      commit('SET_ASS_FILE', data);
+      commit('SET_ASS_FILE_NAME', fileName);
       commit('SET_DIALOGS', dialogs);
       commit('SET_CHARACTERS', parser.getCharacters(dialogs));
       state.characters.forEach((character) => {

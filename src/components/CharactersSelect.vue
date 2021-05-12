@@ -60,7 +60,6 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      console.log('mounted');
       this.$nextTick(() => {
         document.addEventListener('mousedown', this.outsideClickHandler);
       });

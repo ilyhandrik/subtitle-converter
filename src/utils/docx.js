@@ -5,10 +5,23 @@ import { TextRun } from 'docx';
 let colorsActors;
 let colorsCharacters;
 
+const getShadingObject = (color) => {
+  if (color) {
+    return {
+      shading: {
+        type: docx.ShadingType.CLEAR,
+        color: '000000',
+        fill: color,
+      },
+    };
+  }
+  return {};
+};
+
 /*
 Назначение цвета актерам
 */
-const setColors = (actorToCharacters) => {
+const setColors = (actorToCharacters, actor, isClear) => {
   const palette = [
     '#FFEB3B',
     '#B2EBF2',
@@ -26,11 +39,13 @@ const setColors = (actorToCharacters) => {
   ];
   colorsActors = {};
   colorsCharacters = {};
+  if (isClear) return;
   actorToCharacters.forEach((el, index) => {
-    colorsActors[el.actor] = palette[index];
+    const color = (!actor || (actor === el.actor)) ? palette[index] : null;
+    colorsActors[el.actor] = color;
     if (el.characters) {
       el.characters.forEach((char) => {
-        colorsCharacters[char] = palette[index];
+        colorsCharacters[char] = color;
       });
     }
   });
@@ -57,12 +72,8 @@ const createActorsList = (dialogs, actorToCharacters) => actorToCharacters.map((
     children: [
       new docx.TextRun(`${row.actor} - `),
       new docx.TextRun({
-        text: row.characters.join(', '),
-        shading: {
-          type: docx.ShadingType.CLEAR,
-          color: '000000',
-          fill: colorsActors[row.actor],
-        },
+        text: row.characters.join(', ').toUpperCase(),
+        ...getShadingObject(colorsActors[row.actor]),
       }),
       new docx.TextRun({
         text: ` (${actorCount})\n`,
@@ -90,12 +101,8 @@ const createTimeCell = (time) => new docx.TableCell({
 const createCharactersCell = (characters) => new docx.TableCell({
   children: [new docx.Paragraph({
     children: characters.map((character, index) => (new TextRun({
-      text: `${character}${(characters.length > 1) && (index !== (characters.length - 1)) ? '\n' : ''}`,
-      shading: {
-        type: docx.ShadingType.CLEAR,
-        color: '000000',
-        fill: colorsCharacters[character],
-      },
+      text: `${(character.toUpperCase())}${(characters.length > 1) && (index !== (characters.length - 1)) ? '\n' : ''}`,
+      ...getShadingObject(colorsCharacters[character]),
     }))),
     style: 'wellSpaced',
   })],
@@ -130,12 +137,20 @@ const createTable = (dialogs) => {
 };
 
 // eslint-disable-next-line no-unused-vars,max-len
-const getFilteredDialogs = (dialogs, actorToCharacters) => dialogs.filter((dialog) => actorToCharacters.some((element) => element.characters.some((character) => dialog.name.includes(character))));
+const getFilteredDialogs = (dialogs, actorToCharacters) => dialogs
+  .filter((dialog) => actorToCharacters
+    .some((element) => element.characters
+      .some((character) => dialog.name
+        .includes(character))));
 
 // Создание документа
-const createSheet = (dialogs, actorToChars) => {
+const createSheet = (
+  {
+    dialogs, actorToChars, actor, isClear, fileName,
+  },
+) => {
   const actorToCharacters = actorToChars.filter((el) => (el.characters && el.characters.length));
-  setColors(actorToCharacters);
+  setColors(actorToCharacters, actor, isClear);
   const doc = new docx.Document({
     styles: {
       paragraphStyles: [
@@ -178,15 +193,17 @@ const createSheet = (dialogs, actorToChars) => {
         }),
       },
       children: [
-        ...createActorsList(dialogs, actorToCharacters),
-        createTable(getFilteredDialogs(dialogs, actorToCharacters)),
+        ...createActorsList(dialogs, actorToCharacters, actor),
+        createTable(getFilteredDialogs(dialogs, actorToCharacters, actor)),
       ],
     }],
   });
 
-  console.log(doc);
+  let name = fileName;
+  name += actor ? `_${actor}` : '';
+  name += isClear ? '_чистый' : '';
   docx.Packer.toBlob(doc).then((blob) => {
-    fileExport.docxExport(blob);
+    fileExport.docxExport(blob, name);
   });
 };
 
