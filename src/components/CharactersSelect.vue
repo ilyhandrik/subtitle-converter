@@ -3,6 +3,32 @@
     <v-card max-width="290px" elevation="0">
       <v-card-text class="pa-0">
         <v-container class="pa-0">
+          <v-toolbar
+              dense
+              elevation="0"
+              flat
+              class="pa-0 pl-2"
+          >
+            <v-btn
+                small
+                icon
+                class="mr-2"
+                :dark="isCheckedAll"
+                :class="{'primary': isCheckedAll}"
+                @click="checkAll"
+            >
+              <v-icon>mdi-check-all</v-icon>
+            </v-btn>
+            <v-text-field
+                dense
+                autofocus
+                hide-details
+                hint=""
+                v-model="searchText"
+                class="white"
+                @keydown="keydown"
+            ></v-text-field>
+          </v-toolbar>
           <v-list
               class="character-list"
               max-height="300px"
@@ -18,6 +44,7 @@
                   :key="index"
                   @click="select(index)"
                   :disabled="disabledCheck(item)"
+                  v-show="searchQuery(searchText, item)"
               >
                 <template v-slot:default="{ active }">
                   <v-list-item-action>
@@ -46,6 +73,7 @@ export default {
   data() {
     return {
       settings: [],
+      searchText: '',
     };
   },
   props: {
@@ -81,6 +109,16 @@ export default {
         disabled: true,
       }));
     },
+    searchRegexp() {
+      return `^${this.searchText.toUpperCase()}`;
+    },
+    isCheckedAll() {
+      let disabled = 0;
+      Object.keys(this.characterToActorMap).forEach((char) => {
+        if (this.disabledCheck(char)) disabled += 1;
+      });
+      return (disabled === this.characters.length - this.settings.length);
+    },
   },
   methods: {
     select(index) {
@@ -95,13 +133,33 @@ export default {
         this.$emit('close');
       }
     },
+    searchQuery(searchText, item) {
+      return item.toUpperCase().match(this.searchRegexp);
+    },
+    checkAll() {
+      if (this.isCheckedAll) {
+        this.settings = [];
+        this.$emit('remove-all', this.actor);
+      } else {
+        this.settings = [];
+        this.characters.forEach((character, index) => {
+          if (!this.disabledCheck(character)) {
+            this.settings.push(index);
+          }
+        });
+        this.$emit('select-all', this.actor);
+      }
+    },
+    keydown(e) {
+      console.log(e);
+    },
   },
 };
 </script>
 
 <style scoped lang="scss">
   .character-list {
-    overflow-y: scroll;
+    overflow-y: auto;
 
     &__item {
       min-height: 28px;

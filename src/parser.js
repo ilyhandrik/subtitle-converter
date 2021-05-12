@@ -46,7 +46,7 @@ const getCharacters = (dialogs) => {
       uniqueCharacters[name] = name;
     })
   });
-  return Object.keys(uniqueCharacters);
+  return Object.keys(uniqueCharacters).sort();
 };
 
 const getTime = (str) => {

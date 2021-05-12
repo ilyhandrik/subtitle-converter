@@ -83,6 +83,8 @@
           <characters-select
               v-if="editingRow === props.item.actor"
               @select="assignCharactersToActor"
+              @select-all="assignAllCharactersToActor"
+              @remove-all="removeAllCharactersToActor"
               :actor="props.item.actor"
               @close="closeSelect"
           />
@@ -188,6 +190,12 @@ export default {
         character,
         actor: this.editingRow,
       });
+    },
+    assignAllCharactersToActor(actor) {
+      this.$store.commit('ASSIGN_ALL_CHARACTERS_TO_ACTOR', actor);
+    },
+    removeAllCharactersToActor(actor) {
+      this.$store.commit('REMOVE_ALL_CHARACTERS_TO_ACTOR', actor);
     },
     formatCharactersColumn(characters) {
       if (characters.length) {

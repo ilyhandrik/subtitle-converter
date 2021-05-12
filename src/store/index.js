@@ -47,6 +47,20 @@ export default new Vuex.Store({
         state.characterToActorMap[character] = actor;
       }
     },
+    ASSIGN_ALL_CHARACTERS_TO_ACTOR(state, actor) {
+      Object.keys(state.characterToActorMap).forEach((character) => {
+        if (!state.characterToActorMap[character]) {
+          state.characterToActorMap[character] = actor;
+        }
+      });
+    },
+    REMOVE_ALL_CHARACTERS_TO_ACTOR(state, actor) {
+      Object.keys(state.characterToActorMap).forEach((character) => {
+        if (state.characterToActorMap[character] === actor) {
+          state.characterToActorMap[character] = null;
+        }
+      });
+    },
     SET_CHARACTER_TO_ACTOR_MAP(state, map) {
       state.characterToActorMap = map;
     },
