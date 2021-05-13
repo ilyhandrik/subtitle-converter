@@ -1,24 +1,16 @@
 # subtitle-converter
 
-## Project setup
+## Установка зависимостей
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Запуск в dev-режиме
 ```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
+npm run electron:serve
 ```
 
-### Lints and fixes files
+### Сборка
 ```
-npm run lint
+npm run electron:build
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
