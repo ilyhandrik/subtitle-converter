@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import MainTableView from '@/views/MainTableView.vue';
 import ActorsListView from '@/views/ActorsListView.vue';
 import TimeCalcView from '@/views/TimeCalcView.vue';
+import ProjectListEditorView from '@/views/ProjectListEditorView.vue';
 
 Vue.use(VueRouter);
 
@@ -25,6 +26,11 @@ const routes = [
     path: '/time',
     name: 'Time',
     component: TimeCalcView,
+  },
+  {
+    path: '/projects',
+    name: 'Projects',
+    component: ProjectListEditorView,
   },
   {
     path: '/about',

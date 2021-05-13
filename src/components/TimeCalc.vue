@@ -152,7 +152,7 @@ export default {
   }
 
   .ratio {
-    max-width: 200px;
-    width: 200px;
+    max-width: 76px;
+    width: 76px;
   }
 </style>

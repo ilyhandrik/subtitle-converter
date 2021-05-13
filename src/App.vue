@@ -62,6 +62,7 @@
           </v-list-item>
         </v-list-item-group>
       </v-list>
+      <project-list/>
     </v-navigation-drawer>
     <v-main>
       <v-container
@@ -79,9 +80,13 @@
 </template>
 
 <script>
+import ProjectList from '@/components/ProjectList.vue';
 
 export default {
   name: 'App',
+  components: {
+    ProjectList,
+  },
   data() {
     return {
       items: [
@@ -100,10 +105,21 @@ export default {
           icon: 'mdi-clipboard-clock-outline',
           path: '/time',
         },
+        {
+          title: 'Редактировать проекты',
+          icon: 'mdi-clipboard-list-outline',
+          path: '/projects',
+        },
       ],
       currentPage: 0,
       fileName: '',
     };
+  },
+  created() {
+    const projects = localStorage.getItem('projects');
+    if (projects) {
+      this.$store.commit('SET_PROJECTS', JSON.parse(projects));
+    }
   },
   methods: {
     selectAssFile() {
@@ -112,6 +128,7 @@ export default {
     openSubtitles(event) {
       const file = event.target.files[0];
       const reader = new FileReader();
+      if (!file) return;
       reader.onload = (e) => {
         this.fileName = file.name;
         this.$store.dispatch('SET_ASS_FILE', {

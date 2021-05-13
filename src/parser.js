@@ -43,7 +43,9 @@ const getCharacters = (dialogs) => {
   const uniqueCharacters = {};
   dialogs.forEach((dialog) => {
     dialog.name.forEach((name) => {
-      uniqueCharacters[name] = name;
+      if (name) {
+        uniqueCharacters[name] = name;
+      }
     })
   });
   return Object.keys(uniqueCharacters).sort();

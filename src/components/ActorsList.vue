@@ -101,7 +101,6 @@ export default {
       dirtyName: '',
       editedName: '',
       editDialog: false,
-      actorsList: [],
       newActor: '',
       headers: [
         {
@@ -119,6 +118,11 @@ export default {
   computed: {
     actors() {
       return this.$store.state.actors;
+    },
+    actorsList() {
+      return this.actors.map((actor) => ({
+        name: actor,
+      }));
     },
   },
   mounted() {
@@ -143,7 +147,6 @@ export default {
       this.isNewActorActive = !this.isNewActorActive;
     },
 
-    // TODO: Сделать нормально
     keyUpHandler(e) {
       if (e.code === 'Enter') {
         if (this.editDialog) {
@@ -164,10 +167,10 @@ export default {
       }
     },
     updateActorList() {
-      this.actorsList = this.actors.map((actor) => ({
-        name: actor,
-        selected: false,
-      }));
+      // this.actorsList = this.actors.map((actor) => ({
+      //   name: actor,
+      //   selected: false,
+      // }));
     },
     openEditDialog(item) {
       this.editDialog = true;

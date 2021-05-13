@@ -36,19 +36,12 @@
                 Чистый монтажный лист
               </v-list-item>
               <v-divider></v-divider>
-              <v-list-item
-                  @click="saveToJson"
-                  link
-              >
-                Сохранить в json
-              </v-list-item>
-              <v-divider></v-divider>
-              <v-list-item
-                  @click="openJson"
-                  link
-              >
-                Загрузить json
-              </v-list-item>
+                <v-list-item
+                    @click="saveProject"
+                    link
+                >
+                  Сохранить проект
+                </v-list-item>
             </v-list-item-group>
           </v-list>
         </v-menu>
@@ -57,8 +50,9 @@
       <v-data-table
           :headers="headers"
           :items="tableData"
-          :items-per-page="10"
+          :items-per-page="1000"
           fixed-header
+          hide-default-footer
           height="100%"
           :footer-props="footerOptions"
           no-data-text="актеры не добавлены"
@@ -108,11 +102,23 @@
         accept=".json"
         @input="openJsonHandler"
     >
+    <v-row justify="center" v-if="saveProjectDialog">
+      <v-dialog
+          v-model="saveProjectDialog"
+          max-width="290"
+      >
+        <project-saver
+            @close="saveProjectDialog = false"
+        />
+      </v-dialog>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import CharactersSelect from '@/components/CharactersSelect.vue';
+import ProjectSaver from '@/components/ProjectSaver.vue';
+
 import fileExport from '@/utils/fileExport';
 import importFile from '@/utils/importFile';
 import docx from '@/utils/docx';
@@ -121,9 +127,11 @@ export default {
   name: 'MainTable',
   components: {
     CharactersSelect,
+    ProjectSaver,
   },
   data() {
     return {
+      saveProjectDialog: false,
       temp: true,
       ac: 'Депп',
       editingRow: null,
@@ -136,7 +144,7 @@ export default {
           text: 'Актер',
           align: 'start',
           value: 'actor',
-          width: '160px',
+          width: '140px',
         },
         {
           text: 'Персонаж',
@@ -164,9 +172,6 @@ export default {
     characterToActor() {
       return this.$store.getters.characterToActor;
     },
-    actorToCharacters() {
-      return this.$store.getters.actorToCharacters;
-    },
     file() {
       return this.$store.state.assFile;
     },
@@ -177,6 +182,9 @@ export default {
     },
     openJson() {
       this.$refs.fileInput.click();
+    },
+    saveProject() {
+      this.saveProjectDialog = true;
     },
     async openJsonHandler(e) {
       const string = await importFile.readFile(e.target.files[0]);
@@ -209,7 +217,7 @@ export default {
     createSheet({ actor, isClear }) {
       docx.createSheet({
         dialogs: this.$store.state.dialogs,
-        actorToChars: this.actorToCharacters,
+        actorToChars: this.tableData,
         isClear,
         actor,
         fileName: this.$store.state.fileName,

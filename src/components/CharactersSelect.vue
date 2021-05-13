@@ -7,7 +7,7 @@
               dense
               elevation="0"
               flat
-              class="pa-0 pl-2"
+              class="pa-0 pl-0 toolbar"
           >
             <v-btn
                 small
@@ -28,18 +28,25 @@
                 class="white"
                 @keydown="keydown"
             ></v-text-field>
+            <v-icon
+                class="down"
+                @click="rollUp"
+            >
+              mdi-arrow-down-drop-circle-outline
+            </v-icon>
           </v-toolbar>
           <v-list
-              class="character-list"
+              class="character-list pa-0"
               max-height="300px"
           >
             <v-list-item-group
                 v-model="settings"
                 multiple
                 active-class=""
+                class="pa-0"
             >
               <v-list-item
-                  class="character-list__item"
+                  class="character-list__item pl-1"
                   v-for="(item, index) in characters"
                   :key="index"
                   @click="select(index)"
@@ -150,6 +157,9 @@ export default {
         this.$emit('select-all', this.actor);
       }
     },
+    rollUp() {
+      this.$emit('close');
+    },
     keydown(e) {
       console.log(e);
     },
@@ -164,6 +174,17 @@ export default {
     &__item {
       min-height: 28px;
       height: 28px;
+      white-space: nowrap;
     }
+  }
+  .toolbar {
+    position: relative;
+  }
+  .down {
+    position: absolute;
+    top: 12px;
+    right: -28px;
+    z-index: 999;
+    cursor: pointer;
   }
 </style>

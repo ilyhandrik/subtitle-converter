@@ -14,6 +14,7 @@ export default new Vuex.Store({
     characters: [],
     actors: [],
     characterToActorMap: {},
+    projects: [],
   },
   mutations: {
     SET_ASS_FILE(state, data) {
@@ -37,15 +38,23 @@ export default new Vuex.Store({
     ADD_ACTOR(state, name) {
       state.actors.push(name);
     },
-    EDIT_ACTOR(state, { index, newName }) {
+    EDIT_ACTOR(state, { index, newName, oldName }) {
       state.actors.splice(index, 1, newName);
+      Object.keys(state.characterToActorMap).forEach((key) => {
+        if (state.characterToActorMap[key] === oldName) {
+          state.characterToActorMap[key] = newName;
+        }
+      });
     },
     ASSIGN_CHARACTERS_TO_ACTOR(state, { character, actor }) {
+      const map = { ...state.characterToActorMap };
       if (state.characterToActorMap[character] === actor) {
-        state.characterToActorMap[character] = null;
+        map[character] = null;
       } else {
-        state.characterToActorMap[character] = actor;
+        map[character] = actor;
       }
+      state.characterToActorMap = {};
+      state.characterToActorMap = map;
     },
     ASSIGN_ALL_CHARACTERS_TO_ACTOR(state, actor) {
       Object.keys(state.characterToActorMap).forEach((character) => {
@@ -63,6 +72,9 @@ export default new Vuex.Store({
     },
     SET_CHARACTER_TO_ACTOR_MAP(state, map) {
       state.characterToActorMap = map;
+    },
+    SET_PROJECTS(state, projects) {
+      state.projects = projects;
     },
   },
   actions: {
@@ -87,7 +99,7 @@ export default new Vuex.Store({
     EDIT_ACTOR({ commit, state }, { oldName, newName }) {
       const index = state.actors.indexOf(oldName);
       if (index + 1) {
-        commit('EDIT_ACTOR', { index, newName });
+        commit('EDIT_ACTOR', { index, newName, oldName });
       }
     },
     FILL_FROM_JSON({ commit, state }, data) {
@@ -102,6 +114,24 @@ export default new Vuex.Store({
       commit('SET_ACTORS', Object.keys(actors).map((key) => (key)));
       commit('SET_CHARACTER_TO_ACTOR_MAP', { ...state.characterToActorMap, ...map });
     },
+    SAVE_PROJECTS({ commit }, projects) {
+      localStorage.setItem('projects', JSON.stringify(projects));
+      commit('SET_PROJECTS', projects);
+    },
+    APPLY_PROJECT({ commit, state }, index) {
+      const map = {};
+      const actors = [];
+      state.projects[index].actorToCharacters.forEach((el) => {
+        actors.push(el.actor);
+        el.characters.forEach((character) => {
+          if (({}).hasOwnProperty.call(state.characterToActorMap, character)) {
+            map[character] = el.actor;
+          }
+        });
+      });
+      commit('SET_ACTORS', actors);
+      commit('SET_CHARACTER_TO_ACTOR_MAP', { ...state.characterToActorMap, ...map });
+    },
   },
   getters: {
     actorToCharacters(state) {
@@ -110,7 +140,7 @@ export default new Vuex.Store({
         actors[actor] = [];
       });
       Object.keys(state.characterToActorMap).forEach((key) => {
-        if (state.characterToActorMap[key]) {
+        if (actors[state.characterToActorMap[key]]) {
           actors[state.characterToActorMap[key]].push(key);
         }
       });
