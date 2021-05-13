@@ -32,7 +32,7 @@
                 class="down"
                 @click="rollUp"
             >
-              mdi-arrow-down-drop-circle-outline
+              mdi-arrow-up-drop-circle-outline
             </v-icon>
           </v-toolbar>
           <v-list
