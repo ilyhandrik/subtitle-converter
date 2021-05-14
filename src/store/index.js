@@ -15,6 +15,7 @@ export default new Vuex.Store({
     actors: [],
     characterToActorMap: {},
     projects: [],
+    openedProjectName: '',
   },
   mutations: {
     SET_ASS_FILE(state, data) {
@@ -76,6 +77,9 @@ export default new Vuex.Store({
     SET_PROJECTS(state, projects) {
       state.projects = projects;
     },
+    SET_OPENED_PROJECT(state, name) {
+      state.openedProjectName = name;
+    },
   },
   actions: {
     SET_ASS_FILE({ commit, state }, { data, fileName }) {
@@ -119,7 +123,10 @@ export default new Vuex.Store({
       commit('SET_PROJECTS', projects);
     },
     APPLY_PROJECT({ commit, state }, index) {
-      const map = {};
+      const map = { ...state.characterToActorMap };
+      Object.keys(map).forEach((key) => {
+        map[key] = null;
+      });
       const actors = [];
       state.projects[index].actorToCharacters.forEach((el) => {
         actors.push(el.actor);
@@ -130,7 +137,8 @@ export default new Vuex.Store({
         });
       });
       commit('SET_ACTORS', actors);
-      commit('SET_CHARACTER_TO_ACTOR_MAP', { ...state.characterToActorMap, ...map });
+      commit('SET_CHARACTER_TO_ACTOR_MAP', map);
+      commit('SET_OPENED_PROJECT', state.projects[index].name);
     },
   },
   getters: {

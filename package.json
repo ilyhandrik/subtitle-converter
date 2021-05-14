@@ -1,6 +1,6 @@
 {
-  "name": "subtitle-converter",
-  "version": "1.0.0",
+  "name": "RVISION-subtitle",
+  "version": "1.0.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

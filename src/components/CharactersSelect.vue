@@ -29,10 +29,10 @@
                 @keydown="keydown"
             ></v-text-field>
             <v-icon
-                class="down"
+                class="rollup"
                 @click="rollUp"
             >
-              mdi-arrow-up-drop-circle-outline
+              mdi-chevron-up
             </v-icon>
           </v-toolbar>
           <v-list
@@ -180,7 +180,7 @@ export default {
   .toolbar {
     position: relative;
   }
-  .down {
+  .rollup {
     position: absolute;
     top: 12px;
     right: -28px;
