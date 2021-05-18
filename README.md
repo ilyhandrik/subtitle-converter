@@ -12,5 +12,5 @@ npm run electron:serve
 
 ### Сборка
 ```
-npm run electron:build
+npm run electron:build --dir
 ```
